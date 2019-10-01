@@ -1,0 +1,606 @@
+openapi: 3.0.0
+info:
+  x-ibm-name: "b2e3-liferay-dev1"
+  description: This document contains definition of Liferay REST API methods used by
+    application B2X Search.
+  version: 1.0.0
+  title: Liferay REST API definition
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: monika.najmanova@skoda-auto.cz
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: role
+    description: Roles collect permissions that define a particular function within Liferay
+      Portal, according to a particular scope. Roles collect permissions, and
+      users are assigned to roles, either directly or through their association
+      with a User Group, an Organization, or a Site.
+  - name: group
+    description: Groups are mostly used in Liferay as a resource container for
+      permissioning and content scoping purposes.
+  - name: portal
+    description: Liferay Portal provides a platform to build your site on quickly and serve
+      it to all clients—desktop, mobile, or anything in between.
+  - name: permission
+    description: Permissions define a particular function, according to a particular scope.
+      Roles collect permissions, and Users are assigned to Roles.
+security:
+  - basicAuth: []
+paths:
+  "/api/jsonws/role/get-roles/company-id/{companyId}/types/{types}":
+    get:
+      summary: Provides the remote service for accessing roles.
+      description: Provides the remote service for accessing roles. This method basically
+        returns roles for combination of parameters companyId and role types.
+      tags:
+        - role
+      parameters:
+        - name: companyId
+          in: path
+          description: Primary key of the company.
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: types
+          in: path
+          description: Type of the role - 1 (Regular role), 2 (Site role), 3 (Organization
+            role).
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/roles"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal Error
+  /api/jsonws/invoke#/portal/role/get-roles:
+    post:
+      summary: Provides the remote service for accessing roles (alternative path).
+      description: Provides the remote service for accessing roles (alternative path). This
+        method basically returns roles for combination of parameters companyId,
+        role types and specific command. Method gives a benefit to client
+        because parameter 'types' is not required -> more friendly solution.
+      tags:
+        - role
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                companyId:
+                  description: Primary key of the company.
+                  type: integer
+                  format: int64
+                types:
+                  description: Type of the role - 1 (Regular role), 2 (Site role), 3
+                    (Organization role).
+                  type: array
+                  items:
+                    type: integer
+                cmd:
+                  description: 'Use this command: {"/role/get-roles":{}}'
+                  type: string
+              required:
+                - companyId
+                - cmd
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/roles"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal Error
+  "/api/jsonws/group/get-groups/company-id/{companyId}/parent-group-id/{parentGroupId}/site/{site}":
+    get:
+      summary: Provides the remote service for accessing groups.
+      description: Provides the remote service for accessing groups. This method basically
+        returns groups for combination of parameters companyId, parentGroupId
+        and site.
+      tags:
+        - group
+      parameters:
+        - name: companyId
+          in: path
+          description: Primary key of the company.
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: parentGroupId
+          in: path
+          description: Primary key of the parent group. If group doesnt have parent group,
+            use value 0.
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: site
+          in: path
+          description: Whether the group is site (true / false).
+          required: true
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/groups"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal Error
+  /api/jsonws/invoke#/portal/group/get-groups:
+    post:
+      summary: Provides the remote service for accessing groups (alternative path).
+      description: Provides the remote service for accessing groups (alternative path).
+        This method basically returns groups for combination of parameters
+        companyId, parentGroupId, site and specific command.
+      tags:
+        - group
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                companyId:
+                  description: Primary key of the company.
+                  type: integer
+                  format: int64
+                parentGroupId:
+                  description: Primary key of the parent group. If group doesnt have parent
+                    group, use value 0.
+                  type: integer
+                site:
+                  description: Whether the group is site (true / false).
+                  type: boolean
+                cmd:
+                  description: 'Use this command: {"/group/get-groups":{}}'
+                  type: string
+              required:
+                - companyId
+                - parentGroupId
+                - site
+                - cmd
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/groups"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal Error
+  /api/jsonws/portal/get-version:
+    get:
+      summary: Provides the remote service for accessing version of portal.
+      description: Provides the remote service for accessing version of portal. This method
+        basically returns version of portal.
+      tags:
+        - portal
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/portal"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal Error
+  /api/jsonws/invoke#/portal/portal/get-version:
+    post:
+      summary: Provides the remote service for accessing version of portal (alternative
+        path).
+      description: Provides the remote service for accessing version of portal (alternative
+        path). This method basically returns version of portal for specific
+        command.
+      tags:
+        - portal
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                cmd:
+                  description: 'Use this command: {"/portal/get-version":{}}'
+                  type: string
+              required:
+                - cmd
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/portal"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal Error
+  /o/b2e-user-api/search-permissions-filter:
+    get:
+      summary: Provides the remote service for accessing permissions.
+      description: Provides the remote service for accessing permissions. This method
+        returns all permissions for Liferay asset types per one user. Application B2E3 uses this method for communication with Elasticsearch and method is basically permission filter for search.   
+      tags:
+        - permission
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/assetType"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal Error
+servers:
+  - url: https://hostname/b2eportal
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    roles:
+      type: array
+      items:
+        $ref: "#/components/schemas/role"
+    role:
+      type: object
+      properties:
+        classNameId:
+          type: integer
+          description: Every entity generated by Liferay Service Builder Tool has its
+            unique ID which is called classNameId.
+          example: "20045"
+        classPK:
+          type: integer
+          description: ClassPK represents primary keys of a records which are in different
+            table. That means classPK is just like a foreign key reference.
+          example: "3331191"
+        companyId:
+          type: integer
+          description: Primary key of the company
+          example: "20115"
+        createDate:
+          type: integer
+          description: Create date of the role
+          example: "1556623363455"
+        description:
+          type: string
+          description: Description of the role
+          example: Testovací uživatel
+            popisekTest user
+            description
+        descriptionCurrentValue:
+          type: string
+          description: Value of the description in current language
+          example: Testovací uživatel popisek
+        modifiedDate:
+          type: integer
+          description: Date of modification
+          example: "1556623363455"
+        mvccVersion:
+          type: integer
+          description: Multiversion concurrency control
+          example: "0"
+        name:
+          type: string
+          description: Name of the role
+          example: Test User
+        roleId:
+          type: integer
+          description: Primary key of the role
+          example: "3331191"
+        subtype:
+          type: integer
+          description: Subtype of the role
+          example: ""
+        title:
+          type: string
+          description: Title of the role
+          example: 
+        titleCurrentValue:
+          type: string
+          description: Value of the title in current language
+          example: Testovací uživatel
+        type:
+          type: integer
+          description: Type of the role - 1 (Regular role), 2 (Site role), 3 (Organization
+            role)
+          example: "1"
+        userId:
+          type: integer
+          description: Primary key of the user who created the role
+          example: "3221056"
+        userName:
+          type: string
+          description: Username of the user who created the role
+          example: Jan Cvrcek
+        uuid:
+          type: integer
+          description: Universally unique identifier of the role
+          example: "20115"
+    groups:
+      type: array
+      items:
+        $ref: "#/components/schemas/group"
+    group:
+      type: object
+      properties:
+        active:
+          type: boolean
+          description: Whether the group is active (true / false)
+          example: true
+        classNameId:
+          type: integer
+          description: Every entity generated by Liferay Service Builder Tool has its
+            unique ID which is called classNameId.
+          example: "20045"
+        classPK:
+          type: integer
+          description: ClassPK represents primary keys of a records which are in different
+            table. That means classPK is just like a foreign key reference.
+          example: "3330590"
+        companyId:
+          type: integer
+          description: Primary key of the company
+          example: "20115"
+        creatorUserId:
+          type: integer
+          description: Primary key of the group creator
+          example: "3221056"
+        description:
+          type: string
+          description: Description of the group
+          example: Web "Škoda Space - test" slouží k pouze
+            testovaní.The site
+            "Škoda Space - test" is only for testing
+            purposes.
+        descriptionCurrentValue:
+          type: string
+          description: Value of the description in current language
+          example: Web "Škoda Space - test" slouží k pouze testovaní.
+        descriptiveName:
+          type: string
+          description: Descriptive name of the group
+          example: Škoda Space - test
+        friendlyURL:
+          type: string
+          description: The group's friendlyURL
+          example: /skoda-space-test
+        groupId:
+          type: integer
+          description: Primary key of the group
+          example: "3330590"
+        groupKey:
+          type: string
+          description: Key of the group
+          example: Škoda Space - test
+        inheritContent:
+          type: boolean
+          description: Inherit content (true / false)
+          example: false
+        liveGroupId:
+          type: integer
+          description: Primary key of the live group
+          example: "0"
+        manualMembership:
+          type: boolean
+          description: Manual membership (true / false)
+          example: true
+        membershipRestriction:
+          type: integer
+          description: Whether is membership restriction in group
+          example: 0
+        mvccVersion:
+          type: integer
+          description: Multiversion concurrency control
+          example: "5"
+        name:
+          type: string
+          description: Name of the group.
+          example: Škoda Space - test
+        nameCurrentValue:
+          type: string
+          description: Value of the name in current language
+          example: Škoda Space - test
+        parentGroupId:
+          type: integer
+          description: Primary key of the parent group
+          example: "0"
+        remoteStagingGroupCount:
+          type: integer
+          description: Remote staging group count
+          example: 0
+        site:
+          type: boolean
+          description: Whether the group is site (true / false)
+          example: true
+        treePath:
+          type: string
+          description: Treepath of the group
+          example: /3330590/
+        type:
+          type: integer
+          description: Type of the group
+          example: 2
+        uuid:
+          type: string
+          description: Universally unique identifier of the group
+          example: b10da2df-5e65-214b-4c7d-35debd609c1d
+    portal:
+      type: object
+      properties:
+        version:
+          type: string
+          description: Version of the portal
+          example: 7.0.10
+    assetType:
+      type: object
+      description: API returns permissions for all asset types. Data have specific
+        conditions called "must" and "should". Condition "must" means that query
+        must appear in matching documents and will contribute to the score.
+        Condition "should" means that query should appear in the matching
+        document. Unfortunately with both conditions being used together there
+        are no benefits. Don´t be confused with usage of these conditions, thank
+        you.
+      properties:
+        assetType:
+          $ref: "#/components/schemas/must"
+    must:
+      type: object
+      description: Condition "must" doesnt make sence in this scenario but its part of the
+        API.
+      properties:
+        must:
+          $ref: "#/components/schemas/mustArray"
+    mustArray:
+      type: array
+      description: This array only helps to make correct example values in response with
+        code 200.
+      items:
+        $ref: "#/components/schemas/should"
+    should:
+      type: object
+      description: Condition "should" doesnt make sence in this scenario but its part of
+        the API.
+      properties:
+        should:
+          $ref: "#/components/schemas/shouldArray"
+    shouldArray:
+      type: array
+      description: This array only helps to make correct example values in response with
+        code 200.
+      items:
+        oneOf:
+          - $ref: "#/components/schemas/userIdTerm"
+          - $ref: "#/components/schemas/groupRoleIdTerms"
+          - $ref: "#/components/schemas/roleIdTerms"
+    userIdTerm:
+      type: object
+      description: This object only helps to make correct example values in response with
+        code 200.
+      properties:
+        term:
+          $ref: "#/components/schemas/userId"
+    userId:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+          description: Primary key of the user
+          example: 2280595
+    groupRoleIdTerms:
+      type: object
+      description: This object only helps to make correct example values in response with
+        code 200.
+      properties:
+        terms:
+          $ref: "#/components/schemas/groupRoleId"
+    groupRoleId:
+      type: object
+      description: Combination of site ID and site role ID
+      properties:
+        groupRoleId:
+          $ref: "#/components/schemas/groupRoleIdArray"
+    groupRoleIdArray:
+      type: array
+      items:
+        type: string
+        description: Array of group roles
+        example: 20142-20130
+    roleIdTerms:
+      type: object
+      description: This object only helps to make correct example values in response with
+        code 200.
+      properties:
+        terms:
+          $ref: "#/components/schemas/roleId"
+    roleId:
+      type: object
+      description: Primary key of the role
+      properties:
+        roleId:
+          $ref: "#/components/schemas/roleIdArray"
+    roleIdArray:
+      type: array
+      items:
+        type: integer
+        format: int64
+        description: Array of role id´s
+        example: 20125
